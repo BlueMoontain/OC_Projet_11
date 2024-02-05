@@ -1,0 +1,12 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true
+    }
+  ],
+  "name": "P11_IDEMCONNECT",
+  "namespace": "",
+  "sfdcLoginUrl": "gbouvardgrange@creative-hawk-bgazap.com",
+  "sourceApiVersion": "59.0"
+}
