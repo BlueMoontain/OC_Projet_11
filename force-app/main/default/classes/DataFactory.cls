@@ -20,5 +20,17 @@ public class DataFactory {
         }
         insert orders;
         return orders;
+        }
+
+    // Méthode pour créer des produits de commande 
+    public static List<OrderItem> createOrderItems(Integer numItems, Id orderId) {
+        List<OrderItem> items = new List<OrderItem>();
+        for(Integer i = 0; i < numItems; i++) {
+            OrderItem item = new OrderItem();
+            item.OrderId = orderId;
+            items.add(item);
+        }
+        insert items;
+        return items;
     }
 }
