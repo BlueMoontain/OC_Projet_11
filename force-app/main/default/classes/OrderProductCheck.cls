@@ -1,8 +1,0 @@
-public class OrderProductCheck {
-    public static void checkProducts(Order orderchecked) {
-        // Récupére les produits associés à Order
-        // Si aucun produit n'est associé, affiche un message d'erreur
-    }
-    
-    // méthode checkProducts invoquée dans un trigger "OrderStatusTrigger" qui se déclenche lorsque le statut de Order passe de draft à active
-}
