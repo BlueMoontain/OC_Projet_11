@@ -3,14 +3,17 @@ public class testAccountHandler {
     @isTest static void testCheckOrders() {
         // Prépare les données de test
         List<Account> accounts = DataFactory.createAccounts(1);
-        DataFactory.createOrders(1, accounts[0].Id);
-
+        List<Order> orders = DataFactory.createOrders(1, accounts[0].Id);
+    
+        // Supprime l'Order
+        delete orders;
+    
         // Appelle la méthode à tester
         AccountHandler.checkOrders(accounts);
-
+    
         // Récupère les données mises à jour
         Account acc = [SELECT Active__c FROM Account WHERE Id = :accounts[0].Id];
-
+    
         // Vérifie que la case Active__c a été décochée
         System.assertEquals('No', acc.Active__c);
     }

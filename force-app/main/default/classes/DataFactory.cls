@@ -15,12 +15,17 @@ public class DataFactory {
     public static List<Order> createOrders(Integer numOrders, Id accountId) {
         List<Order> orders = new List<Order>();
         for(Integer i = 0; i < numOrders; i++) {
-            Order ord = new Order(Name = 'Test Order ' + i, AccountId = accountId, Status = 'Draft');
+            Order ord = new Order(
+                Name = 'Test Order ' + i, 
+                AccountId = accountId, 
+                Status = 'Draft',
+                EffectiveDate = Date.today()
+            );
             orders.add(ord);
         }
         insert orders;
         return orders;
-        }
+    }
 
     // Méthode pour créer des produits de commande 
     public static List<OrderItem> createOrderItems(Integer numItems, Id orderId) {
