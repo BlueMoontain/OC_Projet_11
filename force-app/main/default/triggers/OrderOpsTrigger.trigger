@@ -1,9 +1,9 @@
 trigger OrderOpsTrigger on Order (before update, after delete) {
     if (Trigger.isBefore && Trigger.isUpdate) {
-        for (Order order : Trigger.new) {
-            if (order.Status == 'Active' && Trigger.oldMap.get(order.Id).Status == 'Draft') {
-                // Appelle la méthode checkProducts dans AccountHandler
-                AccountHandler.checkProducts(order);
+        for (Order ord : Trigger.new) {
+            Order oldOrder = Trigger.oldMap.get(ord.Id);
+            if (oldOrder.Status == 'Draft' && ord.Status == 'Active') {
+                OrderHandler.checkProducts(ord);
             }
         }
     }

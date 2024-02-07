@@ -15,7 +15,7 @@ public class AccountHandler {
         update accountMap.values();
     }
     // méthode createReminder invoquée dans batch programmé via scheduler pour le 1er lundi de chaque mois
-    public static void createReminder(Account acc) {
+    public static task createReminder(Account acc) {
         // Crée une nouvelle tâche de rappel pour le compte
         Task reminder = new Task();
         reminder.WhatId = acc.Id;
@@ -24,7 +24,7 @@ public class AccountHandler {
         reminder.Priority = 'Normale';
         reminder.ActivityDate = Date.today().addDays(5); // Rappel dans 5 jours
         reminder.ReminderDateTime = DateTime.now().addDays(5); // Rappel automatique dans 5 jours
-        insert reminder;
+        return reminder;
     }
     // // méthode pour Scheduler - appel à SchedulerClass.scheduleJob() depuis anonymous method ou test ;
     // public static void scheduleTasksReminder() {
@@ -33,13 +33,14 @@ public class AccountHandler {
     //     System.schedule(jobName, cronExp, new AccountTaskReminderBatch());
     // }
 
-    public static void checkProducts(Order order) {
-        // Récupère les OrderItems associés à l'Order
-        Order ord = [SELECT Id, (SELECT Id FROM OrderItems) FROM Order WHERE Id = :order.Id];
+    // public static void checkProducts(Order order) {
+    //     // Récupère les OrderItems associés à l'Order
+    //     Order ord = [SELECT Id, (SELECT Id FROM OrderItems) FROM Order WHERE Id = :order.Id];
 
-        // Si l'Order n'a pas de produits, empeche la modification et affiche un message d'erreur
-        if (ord.OrderItems.isEmpty()) {
-            order.addError('Aucun produit associé à cette commande. Veuillez saisir des produits avant d\'activer la commande.');
-        }
-    }
+    //     // Si l'Order n'a pas de produits, empeche la modification et affiche un message d'erreur
+    //     if (ord.OrderItems.isEmpty()) {
+    //         order.addError('Aucun produit associé à cette commande. Veuillez saisir des produits avant d\'activer la commande.');
+    //     }
+    // }
 }
+  
