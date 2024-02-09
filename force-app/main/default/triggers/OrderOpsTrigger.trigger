@@ -1,10 +1,14 @@
 trigger OrderOpsTrigger on Order (before update, after delete) {
     if (Trigger.isBefore && Trigger.isUpdate) {
+        List<Order> ordersToUpdate = new List<Order>();
         for (Order ord : Trigger.new) {
             Order oldOrder = Trigger.oldMap.get(ord.Id);
             if (oldOrder.Status == 'Draft' && ord.Status == 'Active') {
-                OrderHandler.checkProducts(ord);
+                ordersToUpdate.add(ord);
             }
+        }
+        if (!ordersToUpdate.isEmpty()) {
+            OrderHandler.checkProducts(ordersToUpdate);
         }
     }
 
