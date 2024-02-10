@@ -14,17 +14,20 @@ public class AccountHandler {
         
         update accountMap.values();
     }
-    // méthode createReminder invoquée dans batch programmé via scheduler pour le 1er lundi de chaque mois
-    public static task createReminder(Account acc) {
-        // Crée une nouvelle tâche de rappel pour le compte
-        Task reminder = new Task();
-        reminder.WhatId = acc.Id;
-        reminder.Subject = 'Call';
-        reminder.Status = 'Nouvelle';
-        reminder.Priority = 'Normale';
-        reminder.ActivityDate = Date.today().addDays(5); // Rappel dans 5 jours
-        reminder.ReminderDateTime = DateTime.now().addDays(5); // Rappel automatique dans 5 jours
-        return reminder;
+    public static List<Task> createReminders(List<Account> accs) {
+        List<Task> reminders = new List<Task>();
+        for (Account acc : accs) {
+            // Crée une nouvelle tâche de rappel pour le compte
+            Task reminder = new Task();
+            reminder.WhatId = acc.Id;
+            reminder.Subject = 'Call';
+            reminder.Status = 'Nouvelle';
+            reminder.Priority = 'Normale';
+            reminder.ActivityDate = Date.today().addDays(5); // Rappel dans 5 jours
+            reminder.ReminderDateTime = DateTime.now().addDays(5); // Rappel automatique dans 5 jours
+            reminders.add(reminder);
+        }
+        return reminders;
     }
     // // méthode pour Scheduler - appel à SchedulerClass.scheduleJob() depuis anonymous method ou test ;
     // public static void scheduleTasksReminder() {

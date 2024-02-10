@@ -19,23 +19,26 @@ public class testAccountHandler {
     }
     @isTest static void testCreateReminder() {
         // Prépare les données de test
-        List<Account> accounts = DataFactory.createAccounts(1);
+        List<Account> accounts = DataFactory.createAccounts(2); // Crée deux comptes pour tester le traitement en bloc
     
         // Appelle la méthode à tester
-        Task reminder = AccountHandler.createReminder(accounts[0]);
+        List<Task> reminders = AccountHandler.createReminders(accounts); // Modifié pour appeler createReminders et passer une liste de comptes
     
-        // Insère la tâche de rappel
-        insert reminder;
+        // Insère les tâches de rappel
+        insert reminders;
     
-        // Récupère la tâche de rappel de la base de données
-        Task retrievedReminder = [SELECT WhatId, Subject, Status, Priority, ActivityDate, ReminderDateTime FROM Task WHERE Id = :reminder.Id];
+        // Récupère les tâches de rappel de la base de données
+        List<Task> retrievedReminders = [SELECT WhatId, Subject, Status, Priority, ActivityDate, ReminderDateTime FROM Task WHERE Id IN :reminders];
     
-        // Vérifie que la tâche de rappel a été correctement créée
-        System.assertNotEquals(null, retrievedReminder);
-        System.assertEquals('Call', retrievedReminder.Subject);
-        System.assertEquals('Nouvelle', retrievedReminder.Status);
-        System.assertEquals('Normale', retrievedReminder.Priority);
-        System.assertEquals(Date.today().addDays(5), retrievedReminder.ActivityDate);
-        System.assertEquals(DateTime.now().addDays(5), retrievedReminder.ReminderDateTime);
+        // Vérifie que les tâches de rappel ont été correctement créées
+        System.assertEquals(2, retrievedReminders.size()); // Vérifie que deux rappels ont été créés
+        for (Task reminder : retrievedReminders) {
+            System.assertNotEquals(null, reminder);
+            System.assertEquals('Call', reminder.Subject);
+            System.assertEquals('Nouvelle', reminder.Status);
+            System.assertEquals('Normale', reminder.Priority);
+            System.assertEquals(Date.today().addDays(5), reminder.ActivityDate);
+            System.assertEquals(DateTime.now().addDays(5), reminder.ReminderDateTime);
+        }
     }
 }
