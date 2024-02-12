@@ -1,5 +1,5 @@
 public class OrderHandler {
-    // méthode checkProducts invoquée dans un trigger qui se déclenche lorsque le statut de Order passe de draft à active
+    // Method checkProducts invoked in OrderOps.trigger that fires when the status of Order changes from draft to active
     public static void checkProducts(List<Order> orders) {
         // Récupère les IDs de tous les Orders
         Set<Id> orderIds = new Set<Id>();
@@ -7,14 +7,12 @@ public class OrderHandler {
             orderIds.add(order.Id);
         }
 
-        // Récupère les OrderItems associés à tous les Orders
+        // Retrieve OrderItems associated with all Orders
         Map<Id, Order> ordersWithItems = new Map<Id, Order>([SELECT Id, (SELECT Id FROM OrderItems) FROM Order WHERE Id IN :orderIds]);
-
-        // Vérifie chaque Order
         for (Order order : orders) {
             Order ordWithItems = ordersWithItems.get(order.Id);
 
-            // Si l'Order n'a pas de produits, empeche la modification et affiche un message d'erreur
+            // If order has no product, prevent modification and display an error message
             if (ordWithItems.OrderItems.isEmpty()) {
                 order.addError('Aucun produit associé à cette commande. Veuillez saisir des produits avant d\'activer la commande.');
             }

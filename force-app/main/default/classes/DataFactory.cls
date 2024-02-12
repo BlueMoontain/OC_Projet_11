@@ -1,6 +1,6 @@
 @isTest
 public class DataFactory {
-    // Méthode pour créer des comptes
+    // Method to create accounts
     public static List<Account> createAccounts(Integer numAccounts) {
         List<Account> accounts = new List<Account>();
         for(Integer i = 0; i < numAccounts; i++) {
@@ -11,7 +11,7 @@ public class DataFactory {
         return accounts;
     }
 
-    // Méthode pour créer des commandes
+    // Method to create orders
     public static List<Order> createOrders(Integer numOrders, Id accountId) {
         List<Order> orders = new List<Order>();
         Id pricebookId = Test.getStandardPricebookId();
@@ -29,7 +29,7 @@ public class DataFactory {
         return orders;
     }
 
-    // Méthode pour créer des produits
+    // Method to create products
     public static List<Product2> createProducts(Integer numProducts) {
         List<Product2> products = new List<Product2>();
         for(Integer i = 0; i < numProducts; i++) {
@@ -42,7 +42,7 @@ public class DataFactory {
         insert products;
         return products;
     }
-    // Méthode pour créer des produits de commande 
+    // Method to create order's items
     public static List<OrderItem> createOrderItems(Integer numItems, Id orderId, Id pricebookEntryId) {
         List<OrderItem> items = new List<OrderItem>();
         for(Integer i = 0; i < numItems; i++) {
@@ -58,7 +58,7 @@ public class DataFactory {
     return items;
 }
 
-    // Méthode pour créer des pricebook entries
+    // Method to create pricebook entries
     public static List<PricebookEntry> createPricebookEntries(Integer numEntries, Id pricebookId, Id productId) {
         List<PricebookEntry> entries = new List<PricebookEntry>();
         for(Integer i = 0; i < numEntries; i++) {

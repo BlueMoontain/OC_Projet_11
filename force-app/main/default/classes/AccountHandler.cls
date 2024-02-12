@@ -1,30 +1,31 @@
 public class AccountHandler {
     
-    // méthode checkOrders (invoquée dans trigger "OrderOps") qui se déclenche lorsqu'un Order est supprimé
+    // checkOrders method (used in OrderOps trigger) triggered when an order is delete
     public static void checkOrders (List<Account> accounts) {
-        // Récupére les Order associés au compte
+        // Map orders with accounts
         Map<Id, Account> accountMap = new Map<Id, Account>([SELECT Id, (SELECT Id FROM Orders) FROM Account WHERE Id IN :accounts]);
         
         for (Account acc : accountMap.values()) {
-            // Si aucun autre Order n'est associé, décoche la case Active__c
+            // If no other Order is associated, uncheck the Active__c field
             if (acc.Orders.isEmpty()) {
                 acc.Active__c = 'No';
             }
-        }
-        
+        }        
         update accountMap.values();
     }
-    public static List<Task> createReminders(List<Account> accs) {
+
+    // createReminders method (used in AccountBatch) 
+    public static List<Task> createReminders(List<Account> accounts) {
         List<Task> reminders = new List<Task>();
-        for (Account acc : accs) {
-            // Crée une nouvelle tâche de rappel pour le compte
+        for (Account account : accounts) {
+            // create a new task 
             Task reminder = new Task();
-            reminder.WhatId = acc.Id;
+            reminder.WhatId = account.Id;
             reminder.Subject = 'Call';
             reminder.Status = 'Nouvelle';
             reminder.Priority = 'Normale';
-            reminder.ActivityDate = Date.today().addDays(5); // Rappel dans 5 jours
-            reminder.ReminderDateTime = DateTime.now().addDays(5); // Rappel automatique dans 5 jours
+            reminder.ActivityDate = Date.today().addDays(5); 
+            reminder.ReminderDateTime = DateTime.now().addDays(5);
             reminders.add(reminder);
         }
         return reminders;
@@ -34,16 +35,6 @@ public class AccountHandler {
     //     String cronExp = '0 0 5 ? 1/1 MON#1 *'; // Premier lundi de chaque mois à 5h00
     //     String jobName = 'AccountTaskReminderJob';
     //     System.schedule(jobName, cronExp, new AccountTaskReminderBatch());
-    // }
-
-    // public static void checkProducts(Order order) {
-    //     // Récupère les OrderItems associés à l'Order
-    //     Order ord = [SELECT Id, (SELECT Id FROM OrderItems) FROM Order WHERE Id = :order.Id];
-
-    //     // Si l'Order n'a pas de produits, empeche la modification et affiche un message d'erreur
-    //     if (ord.OrderItems.isEmpty()) {
-    //         order.addError('Aucun produit associé à cette commande. Veuillez saisir des produits avant d\'activer la commande.');
-    //     }
     // }
 }
   

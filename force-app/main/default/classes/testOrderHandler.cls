@@ -1,14 +1,14 @@
 @isTest
 public class testOrderHandler {
     @isTest static void testCheckProducts() {
-        // Créer un compte de test
+        // Create data using DataFactory
         List<Account> accounts = DataFactory.createAccounts(1);
         Account acc = accounts[0];
 
-        // Créer plusieurs commandes de test avec le statut 'Draft'
+        // Create several orders
         List<Order> orders = DataFactory.createOrders(2, acc.Id);
 
-        // Ajouter un OrderItem à la première commande
+        // add orderItem and pricebook entry for first order
         List<Product2> products = DataFactory.createProducts(1);
         Product2 prod = products[0];
 
@@ -17,17 +17,17 @@ public class testOrderHandler {
 
         DataFactory.createOrderItems(1, orders[0].Id, entry.Id);
 
-        // Appeler la méthode checkProducts
+        // Call method tested
         OrderHandler.checkProducts(orders);
 
-        // Vérifier que la première commande peut être mise à jour sans erreur
+        // Verify that first order is updated as required
         try {
             update orders[0];
         } catch (DmlException e) {
             System.assert(false, 'Une erreur inattendue a été lancée : ' + e.getMessage());
         }
 
-        // Vérifier que la deuxième commande a une erreur
+        // Verify that second order results in an error message
         try {
             update orders[1];
         } catch (DmlException e) {
