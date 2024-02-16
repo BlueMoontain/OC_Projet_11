@@ -25,29 +25,24 @@ public class testAccountBatch {
     }
     @isTest
     static void testAccountBatchScheduled() {
-        // Create test accounts
-        List<Account> testAccounts = new List<Account>();
-        for (Integer i = 0; i < 3; i++) {
-            Account acc = new Account(Name = 'Test Account ' + i);
-            testAccounts.add(acc);
-        }
-        insert testAccounts;
-
+        // Create test accounts using DataFactory
+        List<Account> testAccounts = (List<Account>) DataFactory.createAccounts(3);
+    
         // Ensure that there are no orders or tasks associated with the accounts
         for (Account acc : [SELECT Id, (SELECT Id FROM Orders), (SELECT Id FROM Tasks) FROM Account WHERE Id IN :testAccounts]) {
             System.assertEquals(0, acc.Orders.size());
             System.assertEquals(0, acc.Tasks.size());
         }
-
+    
         // Execute the batch
         AccountBatch batch = new AccountBatch();
         Test.startTest();
         Database.executeBatch(batch);
         Test.stopTest();
-
-        // Check that a task has been created for each account
+    
+        // verify that a task has been created for each account
         for (Account acc : [SELECT Id, (SELECT Id FROM Tasks) FROM Account WHERE Id IN :testAccounts]) {
             System.assertEquals(1, acc.Tasks.size());
         }
     }
-    }
+}

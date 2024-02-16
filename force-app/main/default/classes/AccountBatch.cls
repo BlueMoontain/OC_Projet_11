@@ -8,7 +8,7 @@ global class AccountBatch implements Database.Batchable<sObject>, Schedulable {
 
     global Database.QueryLocator start(Database.BatchableContext batchableContext) {
         // get IDs from accounts with orders
-        List<Id> accountIdsWithOrders = new List<Id>();
+        List<Id> accountIdsWithOrders = new List<Id>(); 
         for (Order order : [SELECT AccountId FROM Order]) {
             accountIdsWithOrders.add(order.AccountId);
         }
@@ -25,12 +25,17 @@ global class AccountBatch implements Database.Batchable<sObject>, Schedulable {
     }
 
     global void execute(Database.BatchableContext BC, List<Account> scope) {
-        //create tasks for accounts scoped using creteReminders method
-        List<Task> tasksToInsert = AccountHandler.createReminders(scope);
-        insert tasksToInsert;
+        List<Task> tasks = AccountHandler.createReminders(scope);
     }
     
-        // finish method, could be used to send a confirmation email. 
+        // finish method
     global void finish(Database.BatchableContext batchableContext) {
+    }
+
+// method to schedule the batch
+    public static void scheduleTasksReminder() {
+        String cronExp = '0 0 5 ? 1/1 MON#1 *'; // first monday of the month 5.00 am
+        String jobName = 'AccountTaskReminderJob';
+        System.schedule(jobName, cronExp, new AccountBatch());
     }
 }

@@ -6,19 +6,16 @@ public class AccountHandler {
         Map<Id, Account> accountMap = new Map<Id, Account>([SELECT Id, (SELECT Id FROM Orders) FROM Account WHERE Id IN :accounts]);
         
         for (Account acc : accountMap.values()) {
-            // If no other Order is associated, uncheck the Active__c field
+            // If no other Order is associated, uncheck the ActiveChecbox__c field
             if (acc.Orders.isEmpty()) {
-                acc.Active__c = 'No';
+                acc.ActiveCheckbox__c = false;
             }
         }        
         update accountMap.values();
     }
-
-    // createReminders method (used in AccountBatch) 
     public static List<Task> createReminders(List<Account> accounts) {
         List<Task> reminders = new List<Task>();
         for (Account account : accounts) {
-            // create a new task 
             Task reminder = new Task();
             reminder.WhatId = account.Id;
             reminder.Subject = 'Call';
@@ -28,13 +25,42 @@ public class AccountHandler {
             reminder.ReminderDateTime = DateTime.now().addDays(5);
             reminders.add(reminder);
         }
+        insert reminders;
         return reminders;
     }
-    // // méthode pour Scheduler - appel à SchedulerClass.scheduleJob() depuis anonymous method ou test ;
-    // public static void scheduleTasksReminder() {
-    //     String cronExp = '0 0 5 ? 1/1 MON#1 *'; // Premier lundi de chaque mois à 5h00
-    //     String jobName = 'AccountTaskReminderJob';
-    //     System.schedule(jobName, cronExp, new AccountTaskReminderBatch());
-    // }
+
+    public static void checkProducts(List<Order> orders) {
+            // List to store Orders that need to be updated
+            List<Order> ordersToUpdate = new List<Order>();
+            
+            for (Order order : orders) {
+                // Check if the Order status is 'Active'
+                if (order.Status == 'Active') {
+                    ordersToUpdate.add(order);
+                }
+            }
+            // If there are no orders to update, return
+            if (ordersToUpdate.isEmpty()) {
+                return;
+            }
+            // get IDs for all Orders
+            Set<Id> orderIds = new Set<Id>();
+            for (Order order : ordersToUpdate) {
+                orderIds.add(order.Id);
+            }
+            // Retrieve OrderItems associated with all Orders
+            Map<Id, Order> ordersWithItems = new Map<Id, Order>([SELECT Id, (SELECT Id FROM OrderItems) FROM Order WHERE Id IN :orderIds]);
+            for (Order order : ordersToUpdate) {
+                Order ordWithItems = ordersWithItems.get(order.Id);
+    
+            // If order has no product, prevent modification and display an error message
+            if (ordWithItems.OrderItems.isEmpty()) {
+            order.addError('Aucun produit associé à cette commande. Veuillez saisir des produits avant de valider la commande.');
+            }
+        }
+    }
 }
+    // // méthode pour Scheduler - appel à SchedulerClass.scheduleJob() depuis anonymous method ou test ;
+
+
   
