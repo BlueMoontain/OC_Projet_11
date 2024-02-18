@@ -1,7 +1,7 @@
 trigger OrderOpsTrigger on Order (before insert, before update, after delete) {
     if (Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)) {
-        // Call the checkProducts method in AccountHandler class
-        AccountHandler.checkProducts(Trigger.new);
+        // Call checkProducts method in AccountOrderHandler class
+        AccountOrderHandler.checkProducts(Trigger.new);
     }
 
     if (Trigger.isAfter && Trigger.isDelete) {
@@ -11,10 +11,10 @@ trigger OrderOpsTrigger on Order (before insert, before update, after delete) {
             accountIds.add(ord.AccountId);
         }
 
-        // Retrieve the related Accounts based on the AccountIds
+        // Retrieve the related Accounts based on the AccountIds set
         List<Account> accounts = [SELECT Id FROM Account WHERE Id IN :accountIds];
 
-        // Call the checkOrders method in AccountHandler class
-        AccountHandler.checkOrders(accounts);
+        // Call checkOrders method in AccountOrderHandler class
+        AccountOrderHandler.checkOrders(accounts);
     }
 }

@@ -2,6 +2,7 @@
 public class testAccountBatch {
     @isTest
     static void testTaskReminderBatch() {
+        // this test will verify that a reminder task is created for accounts without orders or tasks
         // set test data using datafactory
         List<Account> accounts = DataFactory.createAccounts(3);
         DataFactory.createOrders(1, accounts[0].Id);
@@ -25,18 +26,13 @@ public class testAccountBatch {
     }
     @isTest
     static void testAccountBatchScheduled() {
+        // this test will verify that a reminder task is created for accounts without orders or tasks
         // Create test accounts using DataFactory
         List<Account> testAccounts = (List<Account>) DataFactory.createAccounts(3);
     
-        // Ensure that there are no orders or tasks associated with the accounts
-        for (Account acc : [SELECT Id, (SELECT Id FROM Orders), (SELECT Id FROM Tasks) FROM Account WHERE Id IN :testAccounts]) {
-            System.assertEquals(0, acc.Orders.size());
-            System.assertEquals(0, acc.Tasks.size());
-        }
-    
         // Execute the batch
-        AccountBatch batch = new AccountBatch();
         Test.startTest();
+        AccountBatch batch = new AccountBatch();
         Database.executeBatch(batch);
         Test.stopTest();
     
